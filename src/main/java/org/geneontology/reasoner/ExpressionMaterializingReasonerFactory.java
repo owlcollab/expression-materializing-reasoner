@@ -3,7 +3,6 @@ package org.geneontology.reasoner;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.reasoner.IllegalConfigurationException;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
@@ -12,9 +11,9 @@ import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
  * Simple OWL-API {@link OWLReasonerFactory} for instantiating an
  * {@link ExpressionMaterializingReasoner}.
  */
-public class ExpressionMaterializingReasonerFactory implements OWLReasonerFactory {
+public class ExpressionMaterializingReasonerFactory implements OWLExtendedReasonerFactory<ExpressionMaterializingReasoner> {
 
-	OWLReasonerFactory factory;
+	private final OWLReasonerFactory factory;
     public ExpressionMaterializingReasonerFactory(OWLReasonerFactory factory) {
 		super();
 		this.factory = factory;
@@ -24,20 +23,20 @@ public class ExpressionMaterializingReasonerFactory implements OWLReasonerFactor
         return "ExpressionMaterializingReasoner";
     }
 
-    public OWLReasoner createNonBufferingReasoner(OWLOntology ontology) {
+    public ExpressionMaterializingReasoner createNonBufferingReasoner(OWLOntology ontology) {
         return createNonBufferingReasoner(ontology, new SimpleConfiguration());
     }
 
-    public OWLReasoner createReasoner(OWLOntology ontology) {
+    public ExpressionMaterializingReasoner createReasoner(OWLOntology ontology) {
         return createReasoner(ontology, new SimpleConfiguration());
     }
 
-    public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
+    public ExpressionMaterializingReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
         ExpressionMaterializingReasoner r = new ExpressionMaterializingReasoner(ontology, factory, config, BufferingMode.NON_BUFFERING);
         return r;
     }
 
-    public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
+    public ExpressionMaterializingReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
     	ExpressionMaterializingReasoner r = new ExpressionMaterializingReasoner(ontology, factory, config, BufferingMode.BUFFERING);
         return r;
     }
