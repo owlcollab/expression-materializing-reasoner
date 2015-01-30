@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.geneontology</groupId>
-  <artifactId>expression-materializing-reasoner</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
-  <name>ExpressionMaterializingReasoner</name>
-  
-  <properties>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.geneontology</groupId>
+	<artifactId>expression-materializing-reasoner</artifactId>
+	<version>0.0.5</version>
+	<name>ExpressionMaterializingReasoner</name>
+
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<owlapi.version>3.5.1</owlapi.version>
 	</properties>
@@ -21,32 +21,44 @@
 				</configuration>
 			</plugin>
 			<plugin>
-	  			<groupId>org.apache.maven.plugins</groupId>
-	  			<artifactId>maven-source-plugin</artifactId>
-	  			<executions>
-	  				<execution>
-	  					<id>attach-sources</id>
-	  					<goals>
-	  						<goal>jar</goal>
-	  					</goals>
-	  				</execution>
-	  			</executions>
-	  		</plugin>
-	  		<plugin>
-	  			<groupId>org.apache.maven.plugins</groupId>
-	  			<artifactId>maven-javadoc-plugin</artifactId>
-	  			<executions>
-	  				<execution>
-	  					<id>attach-javadocs</id>
-	  					<goals>
-	  						<goal>jar</goal>
-	  					</goals>
-	  				</execution>
-	  			</executions>
-	  		</plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-ssh</artifactId>
+						<version>2.8</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>net.sourceforge.owlapi</groupId>
@@ -64,4 +76,40 @@
 			<version>${owlapi.version}</version>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>BerkeleyBOP</id>
+			<name>Berkeley BOP maven repository</name>
+			<url>http://code.berkeleybop.org/maven/repository/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>BerkeleyBOPSnapshot</id>
+			<url>http://code.berkeleybop.org/maven/snapshot-repository/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>oss-sonatype-snapshot</id>
+			<name>OSS Sonatype Maven Repository - Releases</name>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>BBOPDeployRepository</id>
+			<name>BBOPDeployRepository</name>
+			<url>${bbopdeployrepository}</url>
+		</repository>
+		<snapshotRepository>
+			<id>BBOPSnapshotRepository</id>
+			<name>BBOPSnapshotRepository</name>
+			<url>${bbopsnapshotrepository}</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
