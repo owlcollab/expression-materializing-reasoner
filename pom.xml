@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.geneontology</groupId>
 	<artifactId>expression-materializing-reasoner</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<name>ExpressionMaterializingReasoner</name>
 
 	<properties>
