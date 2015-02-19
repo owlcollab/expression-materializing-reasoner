@@ -1,0 +1,565 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://x.org#"
+     xml:base="http://x.org"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="http://x.org"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://x.org/has-part -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/has-part">
+        <rdfs:subPropertyOf rdf:resource="http://x.org/overlaps"/>
+        <owl:inverseOf rdf:resource="http://x.org/part-of"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/in-taxon -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/in-taxon">
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/overlaps"/>
+            <rdf:Description rdf:about="http://x.org/in-taxon"/>
+        </owl:propertyChainAxiom>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/overlaps -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/overlaps">
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/has-part"/>
+            <rdf:Description rdf:about="http://x.org/part-of"/>
+        </owl:propertyChainAxiom>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/part-of -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/part-of">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <rdfs:subPropertyOf rdf:resource="http://x.org/overlaps"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://x.org/Purkinje-cell -->
+
+    <owl:Class rdf:about="http://x.org/Purkinje-cell">
+        <rdfs:subClassOf rdf:resource="http://x.org/neuron"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/cerebellum"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/Purkinje-cell-type-1 -->
+
+    <owl:Class rdf:about="http://x.org/Purkinje-cell-type-1">
+        <rdfs:subClassOf rdf:resource="http://x.org/Purkinje-cell"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://x.org/human"/>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>MSC part-parent is cerebellum</rdfs:comment>
+        <rdfs:comment>A fictitous class for testing</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/animal -->
+
+    <owl:Class rdf:about="http://x.org/animal">
+        <rdfs:subClassOf rdf:resource="http://x.org/eukaryote"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/arthropod -->
+
+    <owl:Class rdf:about="http://x.org/arthropod">
+        <rdfs:subClassOf rdf:resource="http://x.org/invertebrate"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/axon -->
+
+    <owl:Class rdf:about="http://x.org/axon">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/has-part"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/axon-terminus"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/axon-terminus -->
+
+    <owl:Class rdf:about="http://x.org/axon-terminus">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/axon"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/bird -->
+
+    <owl:Class rdf:about="http://x.org/bird">
+        <rdfs:subClassOf rdf:resource="http://x.org/vertebrate"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/brain -->
+
+    <owl:Class rdf:about="http://x.org/brain">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/nervous-system"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/brain-neuron -->
+
+    <owl:Class rdf:about="http://x.org/brain-neuron">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://x.org/neuron"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                        <owl:someValuesFrom rdf:resource="http://x.org/brain"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/cell -->
+
+    <owl:Class rdf:about="http://x.org/cell">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/organism"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/cerebellum -->
+
+    <owl:Class rdf:about="http://x.org/cerebellum">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/vertebrate"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/brain"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/eukaryote -->
+
+    <owl:Class rdf:about="http://x.org/eukaryote"/>
+    
+
+
+    <!-- http://x.org/fruitfly -->
+
+    <owl:Class rdf:about="http://x.org/fruitfly">
+        <rdfs:subClassOf rdf:resource="http://x.org/arthropod"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/giant-axon -->
+
+    <owl:Class rdf:about="http://x.org/giant-axon">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/squid"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/human -->
+
+    <owl:Class rdf:about="http://x.org/human">
+        <rdfs:subClassOf rdf:resource="http://x.org/mammal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/interneuron -->
+
+    <owl:Class rdf:about="http://x.org/interneuron">
+        <rdfs:subClassOf rdf:resource="http://x.org/neuron"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://x.org/trichoplax"/>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    <owl:Axiom>
+        <rdfs:comment>redundant</rdfs:comment>
+        <owl:annotatedProperty rdf:resource="&rdfs;subClassOf"/>
+        <owl:annotatedSource rdf:resource="http://x.org/interneuron"/>
+        <owl:annotatedTarget>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://x.org/trichoplax"/>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:annotatedTarget>
+    </owl:Axiom>
+    
+
+
+    <!-- http://x.org/invertebrate -->
+
+    <owl:Class rdf:about="http://x.org/invertebrate">
+        <rdfs:subClassOf rdf:resource="http://x.org/animal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/kenyon-cell -->
+
+    <owl:Class rdf:about="http://x.org/kenyon-cell">
+        <rdfs:subClassOf rdf:resource="http://x.org/neuron"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/mushroom-body"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    <owl:Axiom>
+        <rdfs:comment>This is an example of a redundant axiom</rdfs:comment>
+        <owl:annotatedProperty rdf:resource="&rdfs;subClassOf"/>
+        <owl:annotatedSource rdf:resource="http://x.org/kenyon-cell"/>
+        <owl:annotatedTarget>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
+            </owl:Restriction>
+        </owl:annotatedTarget>
+    </owl:Axiom>
+    
+
+
+    <!-- http://x.org/mammal -->
+
+    <owl:Class rdf:about="http://x.org/mammal">
+        <rdfs:subClassOf rdf:resource="http://x.org/vertebrate"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/mouse -->
+
+    <owl:Class rdf:about="http://x.org/mouse">
+        <rdfs:subClassOf rdf:resource="http://x.org/mammal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/mushroom-body -->
+
+    <owl:Class rdf:about="http://x.org/mushroom-body">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/has-part"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/kenyon-cell"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/brain"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/arthropod"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://x.org/plant"/>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    <owl:Axiom>
+        <rdfs:comment>redundant</rdfs:comment>
+        <owl:annotatedProperty rdf:resource="&rdfs;subClassOf"/>
+        <owl:annotatedSource rdf:resource="http://x.org/mushroom-body"/>
+        <owl:annotatedTarget>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://x.org/plant"/>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </owl:annotatedTarget>
+    </owl:Axiom>
+    
+
+
+    <!-- http://x.org/nervous-system -->
+
+    <owl:Class rdf:about="http://x.org/nervous-system">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://x.org/trichoplax"/>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/organism"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/has-part"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/neuron"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/nervous-system-cell -->
+
+    <owl:Class rdf:about="http://x.org/nervous-system-cell">
+        <rdfs:subClassOf rdf:resource="http://x.org/cell"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/nervous-system"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/neuron -->
+
+    <owl:Class rdf:about="http://x.org/neuron">
+        <rdfs:subClassOf rdf:resource="http://x.org/nervous-system-cell"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/has-part"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/axon"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/organism -->
+
+    <owl:Class rdf:about="http://x.org/organism">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/has-part"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/cell"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/plant -->
+
+    <owl:Class rdf:about="http://x.org/plant">
+        <rdfs:subClassOf rdf:resource="http://x.org/eukaryote"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/squid -->
+
+    <owl:Class rdf:about="http://x.org/squid">
+        <rdfs:subClassOf rdf:resource="http://x.org/invertebrate"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/trichoplax -->
+
+    <owl:Class rdf:about="http://x.org/trichoplax">
+        <rdfs:subClassOf rdf:resource="http://x.org/invertebrate"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/vertebrate -->
+
+    <owl:Class rdf:about="http://x.org/vertebrate">
+        <rdfs:subClassOf rdf:resource="http://x.org/animal"/>
+    </owl:Class>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Restriction>
+        <owl:disjointWith>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/mouse"/>
+            </owl:Restriction>
+        </owl:disjointWith>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/human"/>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:disjointWith>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/plant"/>
+            </owl:Restriction>
+        </owl:disjointWith>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:disjointWith>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/mammal"/>
+            </owl:Restriction>
+        </owl:disjointWith>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/bird"/>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:disjointWith>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/vertebrate"/>
+            </owl:Restriction>
+        </owl:disjointWith>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/invertebrate"/>
+    </owl:Restriction>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+
