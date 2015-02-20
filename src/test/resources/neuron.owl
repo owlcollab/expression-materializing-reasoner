@@ -33,6 +33,7 @@
     <!-- http://x.org/has-part -->
 
     <owl:ObjectProperty rdf:about="http://x.org/has-part">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
         <rdfs:subPropertyOf rdf:resource="http://x.org/overlaps"/>
         <owl:inverseOf rdf:resource="http://x.org/part-of"/>
     </owl:ObjectProperty>
