@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.SetOntologyID;
 import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.AxiomNotInProfileException;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.reasoner.ClassExpressionNotInProfileException;
@@ -49,6 +50,8 @@ import org.semanticweb.owlapi.reasoner.TimeOutException;
 import org.semanticweb.owlapi.reasoner.UnsupportedEntailmentTypeException;
 import org.semanticweb.owlapi.reasoner.impl.OWLReasonerBase;
 import org.semanticweb.owlapi.util.Version;
+
+import com.google.common.base.Optional;
 
 /**
  * This wraps an existing reasoner to implement OWLExtendedReasoner.
@@ -123,12 +126,13 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 			manager.applyChange(new SetOntologyID(rootOntology, rootOntologyIRI));
 		}
 		else {
-			if (rootId.isAnonymous()) {
+			Optional<IRI> optional = rootId.getOntologyIRI();
+			if (optional.isPresent() == false) {
 				rootOntologyIRI = IRI.generateDocumentIRI();
 				manager.applyChange(new SetOntologyID(rootOntology, rootOntologyIRI));
 			}
 			else {
-				rootOntologyIRI = rootId.getOntologyIRI();
+				rootOntologyIRI = optional.get();
 			}
 		}
 		AddImport ai = new AddImport(expandedOntology, 
@@ -169,7 +173,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	 * @see ExpressionMaterializingReasoner#setIncludeImports(boolean) if it should include imports
 	 */
 	public void materializeExpressions() {
-		materializeExpressions(rootOntology.getObjectPropertiesInSignature(includeImports));
+		materializeExpressions(rootOntology.getObjectPropertiesInSignature(Imports.fromBoolean(includeImports)));
 	}
 
 	/**
@@ -202,7 +206,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	}
 	
 	private void materializeExpressionsInternal(OWLObjectProperty p) {
-		for (OWLClass baseClass : rootOntology.getClassesInSignature(includeImports)) {
+		for (OWLClass baseClass : rootOntology.getClassesInSignature(Imports.fromBoolean(includeImports))) {
 			// only materialize for non-helper classes
 			if (cxMap.containsKey(baseClass)) {
 				continue;

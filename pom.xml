@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.geneontology</groupId>
 	<artifactId>expression-materializing-reasoner</artifactId>
-	<version>0.0.6-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>ExpressionMaterializingReasoner</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<owlapi.version>3.5.1</owlapi.version>
+		<owlapi.version>4.1.3</owlapi.version>
 	</properties>
 
 	<build>
@@ -16,8 +16,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -92,36 +92,14 @@
 		<dependency>
 			<groupId>org.semanticweb.elk</groupId>
 			<artifactId>elk-owlapi</artifactId>
-			<version>0.4.2</version>
+			<version>0.4.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.hermit-reasoner</groupId>
+			<groupId>net.sourceforge.owlapi</groupId>
 			<artifactId>org.semanticweb.hermit</artifactId>
-			<version>1.3.8.2</version>
+			<version>1.3.8.413</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-activation_1.1_spec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-javamail_1.4_spec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.geronimo.specs</groupId>
-					<artifactId>geronimo-stax-api_1.0_spec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.james</groupId>
-					<artifactId>apache-mime4j-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.woodstox</groupId>
-					<artifactId>woodstox-core-asl</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -134,18 +112,6 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>BerkeleyBOPSnapshot</id>
-			<url>http://code.berkeleybop.org/maven/snapshot-repository/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>oss-sonatype-snapshot</id>
-			<name>OSS Sonatype Maven Repository - Releases</name>
-			<url>https://oss.sonatype.org/content/groups/public</url>
-		</repository>
 	</repositories>
 
 	<distributionManagement>
@@ -154,10 +120,5 @@
 			<name>BBOPDeployRepository</name>
 			<url>${bbopdeployrepository}</url>
 		</repository>
-		<snapshotRepository>
-			<id>BBOPSnapshotRepository</id>
-			<name>BBOPSnapshotRepository</name>
-			<url>${bbopsnapshotrepository}</url>
-		</snapshotRepository>
 	</distributionManagement>
 </project>
