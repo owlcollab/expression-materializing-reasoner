@@ -30,7 +30,7 @@ public class ExpressionMaterializingReasonerTest {
 		OWLOntologyManager m = OWLManager.createOWLOntologyManager();
 		ontology = m.loadOntologyFromOntologyDocument(new File("src/test/resources","neuron.owl"));
 		elkFactory = new ExpressionMaterializingReasonerFactory(new ElkReasonerFactory());
-		OWLReasonerFactory hermit = new org.semanticweb.HermiT.Reasoner.ReasonerFactory();
+		OWLReasonerFactory hermit = new org.semanticweb.HermiT.ReasonerFactory();
 		hermitFactory = new ExpressionMaterializingReasonerFactory(hermit);
 		elkReasoner = elkFactory.createReasoner(ontology);
 		hermitReasoner = hermitFactory.createReasoner(ontology);
