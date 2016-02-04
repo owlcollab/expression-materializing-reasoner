@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.geneontology</groupId>
 	<artifactId>expression-materializing-reasoner</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.2</version>
 	<name>ExpressionMaterializingReasoner</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<owlapi.version>4.1.3</owlapi.version>
+		<owlapi.version>4.1.4</owlapi.version>
 	</properties>
 
 	<build>
