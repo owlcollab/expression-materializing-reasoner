@@ -3,15 +3,91 @@
 	<groupId>org.geneontology</groupId>
 	<artifactId>expression-materializing-reasoner</artifactId>
 	<version>0.1.3</version>
-	<name>ExpressionMaterializingReasoner</name>
+	<packaging>jar</packaging>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>An OWL reasoner extension for quering over existential restrictions</description>
+	<inceptionYear>2016</inceptionYear>
+	<licenses>
+		<license>
+			<name>The BSD 3-Clause License</name>
+			<url>https://opensource.org/licenses/BSD-3-Clause</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+        
+	<developers>
+		<developer>
+			<name>Chris Mungall</name>
+			<email>cjmungall@lbl.gov</email>
+			<organization>Gene Ontology</organization>
+			<organizationUrl>http://geneontology.org</organizationUrl>
+		</developer>
+		<developer>
+			<name>Heiko Dietze</name>
+			<email>hdietze@lbl.gov</email>
+			<organization>Gene Ontology</organization>
+			<organizationUrl>http://geneontology.org</organizationUrl>
+		</developer>
+	</developers>
 
-	<properties>
+        	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<owlapi.version>4.2.5</owlapi.version>
 	</properties>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>doclint-java8-disable</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -110,11 +186,4 @@
 		</repository>
 	</repositories>
 
-	<distributionManagement>
-		<repository>
-			<id>BBOPDeployRepository</id>
-			<name>BBOPDeployRepository</name>
-			<url>${bbopdeployrepository}</url>
-		</repository>
-	</distributionManagement>
 </project>
