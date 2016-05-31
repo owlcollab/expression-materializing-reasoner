@@ -1,19 +1,8 @@
 language: java
 
 jdk:
-  # - openjdk7 # only Java 8 or newer supported
   - oraclejdk8
 
-# install
-before_install:
- # always have the latest owltools build
- - free -m
- - du -hs *
- - ls -la
-
-
-# run tests
-# Warning: travis fails, when log output >4M
-script:
-  - mvn clean test
-
+## See: http://stackoverflow.com/questions/14825039/suppressing-gpg-signing-for-maven-based-continous-integration-builds-travis-ci
+install: mvn install -DskipTests -Dgpg.skip
+  
