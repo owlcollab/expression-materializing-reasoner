@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/owlcollab/expression-materializing-reasoner.svg?branch=master)](https://travis-ci.org/owlcollab/expression-materializing-reasoner)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.geneontology/expression-materializing-reasoner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.geneontology/expression-materializing-reasoner)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.geneontology/expression-materializing-reasoner/badge.svg)](http://www.javadoc.io/doc/org.geneontology/expression-materializing-reasoner)
+
 This wraps an existing reasoner to implement OWLExtendedReasoner.
  
 It works by materializing expressions of the form "R some Y" as equivalence axioms prior to reasoning.
