@@ -38,7 +38,7 @@
 		<tag>HEAD</tag>
 	</scm>
 
-        	<properties>
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<owlapi.version>4.2.5</owlapi.version>
 	</properties>
