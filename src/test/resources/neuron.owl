@@ -1,21 +1,38 @@
 <?xml version="1.0"?>
-
-
-<!DOCTYPE rdf:RDF [
-    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
-    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
-    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
-    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-]>
-
-
-<rdf:RDF xmlns="http://x.org#"
-     xml:base="http://x.org"
-     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+<rdf:RDF xmlns="http://x.org/"
+     xml:base="http://x.org/"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-    <owl:Ontology rdf:about="http://x.org"/>
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://x.org">
+        <rdfs:comment>for testing EMR</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#created_by -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#created_by"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#creation_date -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#creation_date"/>
     
 
 
@@ -30,12 +47,59 @@
     
 
 
+    <!-- http://x.org/acts-upstream-of -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/acts-upstream-of">
+        <rdfs:subPropertyOf rdf:resource="http://x.org/acts-upstream-of-or-within"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-29T00:02:33Z</oboInOwl:creation_date>
+        <rdfs:label>acts-upstream-of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/acts-upstream-of-or-within -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/acts-upstream-of-or-within">
+        <rdfs:domain rdf:resource="http://x.org/molecular-entity"/>
+        <rdfs:range rdf:resource="http://x.org/process"/>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/acts-upstream-of-or-within"/>
+            <rdf:Description rdf:about="http://x.org/part-of"/>
+        </owl:propertyChainAxiom>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/enables"/>
+            <rdf:Description rdf:about="http://x.org/upstream-of-or-within"/>
+        </owl:propertyChainAxiom>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/involved-in"/>
+            <rdf:Description rdf:about="http://x.org/upstream-of-or-within"/>
+        </owl:propertyChainAxiom>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:28:22Z</oboInOwl:creation_date>
+        <rdfs:label>acts-upstream-of-or-within</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/enables -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/enables">
+        <rdfs:domain rdf:resource="http://x.org/molecular-entity"/>
+        <rdfs:range rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:25:22Z</oboInOwl:creation_date>
+        <rdfs:label>enables</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://x.org/has-part -->
 
     <owl:ObjectProperty rdf:about="http://x.org/has-part">
-        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
         <rdfs:subPropertyOf rdf:resource="http://x.org/overlaps"/>
         <owl:inverseOf rdf:resource="http://x.org/part-of"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
     </owl:ObjectProperty>
     
 
@@ -43,6 +107,7 @@
     <!-- http://x.org/in-taxon -->
 
     <owl:ObjectProperty rdf:about="http://x.org/in-taxon">
+        <rdfs:range rdf:resource="http://x.org/organism"/>
         <owl:propertyChainAxiom rdf:parseType="Collection">
             <rdf:Description rdf:about="http://x.org/overlaps"/>
             <rdf:Description rdf:about="http://x.org/in-taxon"/>
@@ -51,9 +116,72 @@
     
 
 
+    <!-- http://x.org/involved-in -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/involved-in">
+        <rdfs:subPropertyOf rdf:resource="http://x.org/acts-upstream-of-or-within"/>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/enables"/>
+            <rdf:Description rdf:about="http://x.org/part-of"/>
+        </owl:propertyChainAxiom>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:27:49Z</oboInOwl:creation_date>
+        <rdfs:label>involved-in</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/involved-in-regulation-of -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/involved-in-regulation-of">
+        <rdfs:subPropertyOf rdf:resource="http://x.org/acts-upstream-of-or-within"/>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/involved-in"/>
+            <rdf:Description rdf:about="http://x.org/regulates"/>
+        </owl:propertyChainAxiom>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:28:11Z</oboInOwl:creation_date>
+        <rdfs:label>involved-in-regulation-of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/is-active-in -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/is-active-in">
+        <rdfs:domain rdf:resource="http://x.org/molecular-entity"/>
+        <rdfs:range rdf:resource="http://x.org/continuant"/>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/enables"/>
+            <rdf:Description rdf:about="http://x.org/occurs-in"/>
+        </owl:propertyChainAxiom>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:23:22Z</oboInOwl:creation_date>
+        <rdfs:label>is-active-in</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/occurs-in -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/occurs-in">
+        <rdfs:domain rdf:resource="http://x.org/process"/>
+        <rdfs:range rdf:resource="http://x.org/continuant"/>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://x.org/occurs-in"/>
+            <rdf:Description rdf:about="http://x.org/part-of"/>
+        </owl:propertyChainAxiom>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:25:37Z</oboInOwl:creation_date>
+        <rdfs:label>occurs-in</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://x.org/overlaps -->
 
     <owl:ObjectProperty rdf:about="http://x.org/overlaps">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
         <owl:propertyChainAxiom rdf:parseType="Collection">
             <rdf:Description rdf:about="http://x.org/has-part"/>
             <rdf:Description rdf:about="http://x.org/part-of"/>
@@ -65,8 +193,43 @@
     <!-- http://x.org/part-of -->
 
     <owl:ObjectProperty rdf:about="http://x.org/part-of">
-        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
         <rdfs:subPropertyOf rdf:resource="http://x.org/overlaps"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/regulates -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/regulates">
+        <rdfs:subPropertyOf rdf:resource="http://x.org/upstream-of-or-within"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:27:59Z</oboInOwl:creation_date>
+        <rdfs:label>regulates</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/upstream-of -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/upstream-of">
+        <rdfs:subPropertyOf rdf:resource="http://x.org/upstream-of-or-within"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:32:38Z</oboInOwl:creation_date>
+        <rdfs:label>upstream-of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://x.org/upstream-of-or-within -->
+
+    <owl:ObjectProperty rdf:about="http://x.org/upstream-of-or-within">
+        <rdfs:domain rdf:resource="http://x.org/process"/>
+        <rdfs:range rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:32:48Z</oboInOwl:creation_date>
+        <rdfs:label>upstream-of-or-within</rdfs:label>
     </owl:ObjectProperty>
     
 
@@ -79,6 +242,25 @@
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
 
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Nothing -->
+
+    <rdf:Description rdf:about="http://www.w3.org/2002/07/owl#Nothing">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/organism-part"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/occurs-in"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/process"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+    </rdf:Description>
     
 
 
@@ -110,8 +292,8 @@
                 </owl:someValuesFrom>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <rdfs:comment>MSC part-parent is cerebellum</rdfs:comment>
         <rdfs:comment>A fictitous class for testing</rdfs:comment>
+        <rdfs:comment>MSC part-parent is cerebellum</rdfs:comment>
     </owl:Class>
     
 
@@ -120,6 +302,17 @@
 
     <owl:Class rdf:about="http://x.org/animal">
         <rdfs:subClassOf rdf:resource="http://x.org/eukaryote"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/apoptosis -->
+
+    <owl:Class rdf:about="http://x.org/apoptosis">
+        <rdfs:subClassOf rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:30:44Z</oboInOwl:creation_date>
+        <rdfs:label>apoptosis</rdfs:label>
     </owl:Class>
     
 
@@ -135,6 +328,7 @@
     <!-- http://x.org/axon -->
 
     <owl:Class rdf:about="http://x.org/axon">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/has-part"/>
@@ -148,6 +342,7 @@
     <!-- http://x.org/axon-terminus -->
 
     <owl:Class rdf:about="http://x.org/axon-terminus">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/part-of"/>
@@ -169,6 +364,7 @@
     <!-- http://x.org/brain -->
 
     <owl:Class rdf:about="http://x.org/brain">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/part-of"/>
@@ -200,6 +396,7 @@
     <!-- http://x.org/cell -->
 
     <owl:Class rdf:about="http://x.org/cell">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/part-of"/>
@@ -213,6 +410,7 @@
     <!-- http://x.org/cerebellum -->
 
     <owl:Class rdf:about="http://x.org/cerebellum">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
@@ -229,9 +427,39 @@
     
 
 
+    <!-- http://x.org/continuant -->
+
+    <owl:Class rdf:about="http://x.org/continuant">
+        <owl:disjointWith rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T22:00:44Z</oboInOwl:creation_date>
+        <rdfs:label>continuant</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- http://x.org/eukaryote -->
 
-    <owl:Class rdf:about="http://x.org/eukaryote"/>
+    <owl:Class rdf:about="http://x.org/eukaryote">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/execution-phase-of-apoptosis -->
+
+    <owl:Class rdf:about="http://x.org/execution-phase-of-apoptosis">
+        <rdfs:subClassOf rdf:resource="http://x.org/process"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/apoptosis"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:31:42Z</oboInOwl:creation_date>
+        <rdfs:label>execution phase of apoptosis</rdfs:label>
+    </owl:Class>
     
 
 
@@ -246,6 +474,7 @@
     <!-- http://x.org/giant-axon -->
 
     <owl:Class rdf:about="http://x.org/giant-axon">
+        <rdfs:subClassOf rdf:resource="http://x.org/axon"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
@@ -280,9 +509,8 @@
         </rdfs:subClassOf>
     </owl:Class>
     <owl:Axiom>
-        <rdfs:comment>redundant</rdfs:comment>
-        <owl:annotatedProperty rdf:resource="&rdfs;subClassOf"/>
         <owl:annotatedSource rdf:resource="http://x.org/interneuron"/>
+        <owl:annotatedProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
         <owl:annotatedTarget>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
@@ -293,6 +521,7 @@
                 </owl:someValuesFrom>
             </owl:Restriction>
         </owl:annotatedTarget>
+        <rdfs:comment>redundant</rdfs:comment>
     </owl:Axiom>
     
 
@@ -323,15 +552,15 @@
         </rdfs:subClassOf>
     </owl:Class>
     <owl:Axiom>
-        <rdfs:comment>This is an example of a redundant axiom</rdfs:comment>
-        <owl:annotatedProperty rdf:resource="&rdfs;subClassOf"/>
         <owl:annotatedSource rdf:resource="http://x.org/kenyon-cell"/>
+        <owl:annotatedProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
         <owl:annotatedTarget>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
             </owl:Restriction>
         </owl:annotatedTarget>
+        <rdfs:comment>This is an example of a redundant axiom</rdfs:comment>
     </owl:Axiom>
     
 
@@ -340,6 +569,17 @@
 
     <owl:Class rdf:about="http://x.org/mammal">
         <rdfs:subClassOf rdf:resource="http://x.org/vertebrate"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/molecular-entity -->
+
+    <owl:Class rdf:about="http://x.org/molecular-entity">
+        <rdfs:subClassOf rdf:resource="http://x.org/continuant"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T22:01:21Z</oboInOwl:creation_date>
+        <rdfs:label>molecular-entity</rdfs:label>
     </owl:Class>
     
 
@@ -355,16 +595,11 @@
     <!-- http://x.org/mushroom-body -->
 
     <owl:Class rdf:about="http://x.org/mushroom-body">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/has-part"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/kenyon-cell"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://x.org/part-of"/>
-                <owl:someValuesFrom rdf:resource="http://x.org/brain"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
@@ -383,11 +618,16 @@
                 </owl:someValuesFrom>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/brain"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
     <owl:Axiom>
-        <rdfs:comment>redundant</rdfs:comment>
-        <owl:annotatedProperty rdf:resource="&rdfs;subClassOf"/>
         <owl:annotatedSource rdf:resource="http://x.org/mushroom-body"/>
+        <owl:annotatedProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
         <owl:annotatedTarget>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
@@ -398,6 +638,7 @@
                 </owl:someValuesFrom>
             </owl:Restriction>
         </owl:annotatedTarget>
+        <rdfs:comment>redundant</rdfs:comment>
     </owl:Axiom>
     
 
@@ -405,6 +646,19 @@
     <!-- http://x.org/nervous-system -->
 
     <owl:Class rdf:about="http://x.org/nervous-system">
+        <rdfs:subClassOf rdf:resource="http://x.org/organism-part"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/has-part"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/neuron"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
@@ -417,20 +671,8 @@
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
-                <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/part-of"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/organism"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://x.org/has-part"/>
-                <owl:someValuesFrom rdf:resource="http://x.org/neuron"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -440,6 +682,17 @@
     <!-- http://x.org/nervous-system-cell -->
 
     <owl:Class rdf:about="http://x.org/nervous-system-cell">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://x.org/cell"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                        <owl:someValuesFrom rdf:resource="http://x.org/nervous-system"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://x.org/cell"/>
         <rdfs:subClassOf>
             <owl:Restriction>
@@ -468,12 +721,25 @@
     <!-- http://x.org/organism -->
 
     <owl:Class rdf:about="http://x.org/organism">
+        <rdfs:subClassOf rdf:resource="http://x.org/continuant"/>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/has-part"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/cell"/>
             </owl:Restriction>
         </rdfs:subClassOf>
+        <owl:disjointWith rdf:resource="http://x.org/organism-part"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/organism-part -->
+
+    <owl:Class rdf:about="http://x.org/organism-part">
+        <rdfs:subClassOf rdf:resource="http://x.org/continuant"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T17:27:48Z</oboInOwl:creation_date>
+        <rdfs:label>organism part</rdfs:label>
     </owl:Class>
     
 
@@ -482,6 +748,68 @@
 
     <owl:Class rdf:about="http://x.org/plant">
         <rdfs:subClassOf rdf:resource="http://x.org/eukaryote"/>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/process -->
+
+    <owl:Class rdf:about="http://x.org/process">
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:30:09Z</oboInOwl:creation_date>
+        <rdfs:label>process</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/receptor-activity -->
+
+    <owl:Class rdf:about="http://x.org/receptor-activity">
+        <rdfs:subClassOf rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T23:49:07Z</oboInOwl:creation_date>
+        <rdfs:label>receptor-activity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/receptor-activity-in-apoptosis -->
+
+    <owl:Class rdf:about="http://x.org/receptor-activity-in-apoptosis">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://x.org/receptor-activity"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://x.org/part-of"/>
+                        <owl:someValuesFrom rdf:resource="http://x.org/apoptosis"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T23:49:33Z</oboInOwl:creation_date>
+        <rdfs:label>receptor-activity-in-apoptosis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://x.org/regulation-of-apoptosis -->
+
+    <owl:Class rdf:about="http://x.org/regulation-of-apoptosis">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/regulates"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/apoptosis"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://x.org/process"/>
+        <oboInOwl:created_by rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cjm</oboInOwl:created_by>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T18:31:02Z</oboInOwl:creation_date>
+        <oboInOwl:creation_date rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2018-04-28T23:54:26Z</oboInOwl:creation_date>
+        <rdfs:label>regulation of apoptosis</rdfs:label>
+        <rdfs:label>regulation-of-apoptosis</rdfs:label>
     </owl:Class>
     
 
@@ -519,48 +847,48 @@
      -->
 
     <owl:Restriction>
-        <owl:disjointWith>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
-                <owl:someValuesFrom rdf:resource="http://x.org/mouse"/>
-            </owl:Restriction>
-        </owl:disjointWith>
         <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
-        <owl:someValuesFrom rdf:resource="http://x.org/human"/>
-    </owl:Restriction>
-    <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
         <owl:disjointWith>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/plant"/>
             </owl:Restriction>
         </owl:disjointWith>
-        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
-        <owl:someValuesFrom rdf:resource="http://x.org/animal"/>
     </owl:Restriction>
     <owl:Restriction>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/bird"/>
         <owl:disjointWith>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/mammal"/>
             </owl:Restriction>
         </owl:disjointWith>
-        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
-        <owl:someValuesFrom rdf:resource="http://x.org/bird"/>
     </owl:Restriction>
     <owl:Restriction>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/human"/>
+        <owl:disjointWith>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+                <owl:someValuesFrom rdf:resource="http://x.org/mouse"/>
+            </owl:Restriction>
+        </owl:disjointWith>
+    </owl:Restriction>
+    <owl:Restriction>
+        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
+        <owl:someValuesFrom rdf:resource="http://x.org/invertebrate"/>
         <owl:disjointWith>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
                 <owl:someValuesFrom rdf:resource="http://x.org/vertebrate"/>
             </owl:Restriction>
         </owl:disjointWith>
-        <owl:onProperty rdf:resource="http://x.org/in-taxon"/>
-        <owl:someValuesFrom rdf:resource="http://x.org/invertebrate"/>
     </owl:Restriction>
 </rdf:RDF>
 
 
 
-<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+<!-- Generated by the OWL API (version 4.2.8.20170104-2310) https://github.com/owlcs/owlapi -->
 
