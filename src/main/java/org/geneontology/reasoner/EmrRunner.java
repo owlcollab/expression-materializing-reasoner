@@ -94,15 +94,17 @@ public class EmrRunner {
         OWLOntologyManager mgr = ontology.getOWLOntologyManager();
         OWLDataFactory df = mgr.getOWLDataFactory();
         OWLOntology newOntology = mgr.createOntology();
+        newOntology = mgr.createOntology();
         if (method.equals("svf")) {
             LOG.info("Getting all subsumptions");
-            Set<OWLSubClassOfAxiom> axioms = xreasoner.getSomeValuesFromSubsumptions(props);
-            newOntology = mgr.createOntology();
+            Set<OWLSubClassOfAxiom> axioms = xreasoner.getInferredSubClassOfGCIAxioms(props);
             mgr.addAxioms(newOntology, axioms);
             
         }
         else {
-            
+            // assume method is closure
+            Set<OWLSubClassOfAxiom> axioms = ExtenderReasonerUtils.getInferredSubClassOfAxiomsForNamedClasses(xreasoner, false);
+            mgr.addAxioms(newOntology, axioms);
         }
         File outfile = new File(outpath);
         LOG.info("Saving to "+outfile);

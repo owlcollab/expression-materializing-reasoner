@@ -410,7 +410,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
         return axioms;
 	}
 	
-	public Set<OWLSubClassOfAxiom> getSomeValuesFromSubsumptions() throws InconsistentOntologyException,
+	public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms() throws InconsistentOntologyException,
 	ClassExpressionNotInProfileException, FreshEntitiesException,
 	ReasonerInterruptedException, TimeOutException {
 	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
@@ -421,7 +421,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	    return axioms;
 	}
 	
-	public Set<OWLSubClassOfAxiom> getSomeValuesFromSubsumptions(Set<OWLObjectProperty> props) throws InconsistentOntologyException,
+	public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms(Set<OWLObjectProperty> props) throws InconsistentOntologyException,
 	ClassExpressionNotInProfileException, FreshEntitiesException,
 	ReasonerInterruptedException, TimeOutException {
 	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();

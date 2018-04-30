@@ -103,7 +103,7 @@ public class ExpressionMaterializingReasonerTest {
 		
 		
 		//assertTrue("SVF test failed", okSvfTest1);
-        Set<OWLSubClassOfAxiom> axs = elkExtReasoner.getSomeValuesFromSubsumptions();
+        Set<OWLSubClassOfAxiom> axs = elkExtReasoner.getInferredSubClassOfGCIAxioms();
         
         for (OWLSubClassOfAxiom ax : axs) {
             LOG.debug("AX: "+ax);

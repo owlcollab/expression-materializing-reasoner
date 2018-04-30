@@ -125,7 +125,7 @@ public interface OWLExtendedReasoner extends OWLReasoner {
      * @throws ReasonerInterruptedException
      * @throws TimeOutException
      */
-    public Set<OWLSubClassOfAxiom> getSomeValuesFromSubsumptions() 
+    public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms() 
             throws InconsistentOntologyException,
             ClassExpressionNotInProfileException, FreshEntitiesException,
             ReasonerInterruptedException, TimeOutException;
@@ -141,7 +141,7 @@ public interface OWLExtendedReasoner extends OWLReasoner {
      * @throws ReasonerInterruptedException
      * @throws TimeOutException
      */
-    public Set<OWLSubClassOfAxiom> getSomeValuesFromSubsumptions(
+    public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms(
             Set<OWLObjectProperty> props) throws InconsistentOntologyException,
     ClassExpressionNotInProfileException, FreshEntitiesException,
     ReasonerInterruptedException, TimeOutException;
