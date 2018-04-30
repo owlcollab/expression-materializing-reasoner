@@ -43,7 +43,7 @@ public class EmrRunner {
     private String propOntPath;
 
     @Parameter(names = { "-m", "--method"}, description = "one of: closure, svf")
-    private String method;
+    private String method = "closure";
 
     @Parameter(names = { "-t", "--to"}, description = "output format: json or yaml")
     private String outformat;
