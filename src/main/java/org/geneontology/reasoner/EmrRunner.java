@@ -97,7 +97,7 @@ public class EmrRunner {
         newOntology = mgr.createOntology();
         if (method.equals("svf")) {
             LOG.info("Getting all subsumptions");
-            Set<OWLSubClassOfAxiom> axioms = xreasoner.getInferredSubClassOfGCIAxioms(props);
+            Set<OWLSubClassOfAxiom> axioms = ExtenderReasonerUtils.getInferredSubClassOfGCIAxioms(xreasoner, props);
             mgr.addAxioms(newOntology, axioms);
             
         }

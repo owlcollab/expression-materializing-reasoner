@@ -82,7 +82,7 @@ public class ExpressionMaterializingReasonerTest {
 						//logger.info(cls + " " + p + " "+isDirect + " = "+par);
 					}
                     Set<OWLObjectSomeValuesFrom> svfparents = 
-                            elkExtReasoner.getSomeValuesFromSuperClasses(cls, p, isDirect);
+                            elkExtReasoner.getSuperClassExpressionsForGCI(cls, p, isDirect);
                     for (OWLClass par : parents) {
                         String s = p +" SOME " + cls + " SubClassOf: " +
                                 p + " SOME " + par;
@@ -103,7 +103,7 @@ public class ExpressionMaterializingReasonerTest {
 		
 		
 		//assertTrue("SVF test failed", okSvfTest1);
-        Set<OWLSubClassOfAxiom> axs = elkExtReasoner.getInferredSubClassOfGCIAxioms();
+        Set<OWLSubClassOfAxiom> axs = ExtenderReasonerUtils.getInferredSubClassOfGCIAxioms(elkExtReasoner);
         
         for (OWLSubClassOfAxiom ax : axs) {
             LOG.debug("AX: "+ax);

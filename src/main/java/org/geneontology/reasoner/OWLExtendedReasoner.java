@@ -76,13 +76,13 @@ public interface OWLExtendedReasoner extends OWLReasoner {
 	   
 
 	/**
-	 * Given a property p, and a base class c, find all classes s such that
-	 * (p some c) SubClassOf (p some s)
+	 * Given a property p, and a filler c, find all subsuming someValuesFrom expressions
+	 * (p some c) SubClassOf (ps some s)
 	 * 
 	 * 
 	 * 
-	 * @param baseClass
-	 * @param p
+	 * @param filler
+	 * @param someValuesFromProperty
 	 * @param direct
 	 * @return classes
 	 * @throws InconsistentOntologyException
@@ -91,8 +91,8 @@ public interface OWLExtendedReasoner extends OWLReasoner {
 	 * @throws ReasonerInterruptedException
 	 * @throws TimeOutException
 	 */
-	public Set<OWLObjectSomeValuesFrom> getSomeValuesFromSuperClasses(OWLClass baseClass,
-            OWLObjectProperty p,
+	public Set<OWLObjectSomeValuesFrom> getSuperClassExpressionsForGCI(OWLClass filler,
+            OWLObjectProperty someValuesFromProperty,
             boolean direct)
                     throws InconsistentOntologyException,
                     ClassExpressionNotInProfileException, FreshEntitiesException,
@@ -110,7 +110,7 @@ public interface OWLExtendedReasoner extends OWLReasoner {
      * @throws ReasonerInterruptedException
      * @throws TimeOutException
      */
-    public Set<OWLSubClassOfAxiom> getSomeValuesFromSubsumptions(OWLObjectProperty p) 
+    public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms(OWLObjectProperty p) 
             throws InconsistentOntologyException,
             ClassExpressionNotInProfileException, FreshEntitiesException,
             ReasonerInterruptedException, TimeOutException;

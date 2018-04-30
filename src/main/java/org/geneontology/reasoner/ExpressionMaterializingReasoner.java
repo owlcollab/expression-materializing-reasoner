@@ -347,7 +347,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 		return ces;
 	}
 	
-	public Set<OWLObjectSomeValuesFrom> getSomeValuesFromSuperClasses(OWLClass baseClass,
+	public Set<OWLObjectSomeValuesFrom> getSuperClassExpressionsForGCI(OWLClass baseClass,
 	        OWLObjectProperty p,
 	        boolean direct) throws InconsistentOntologyException,
 	ClassExpressionNotInProfileException, FreshEntitiesException,
@@ -390,7 +390,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	}
 	
 	
-	public Set<OWLSubClassOfAxiom> getSomeValuesFromSubsumptions(OWLObjectProperty p) throws InconsistentOntologyException,
+	public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms(OWLObjectProperty p) throws InconsistentOntologyException,
 	ClassExpressionNotInProfileException, FreshEntitiesException,
 	ReasonerInterruptedException, TimeOutException {
 	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
@@ -416,7 +416,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
 	    for (OWLObjectProperty p : rootOntology.getObjectPropertiesInSignature()) {
 	        LOG.info("Calculating svf subsumptions for "+p);
-	        axioms.addAll(getSomeValuesFromSubsumptions(p));
+	        axioms.addAll(getInferredSubClassOfGCIAxioms(p));
 	    }
 	    return axioms;
 	}
@@ -429,7 +429,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	        props = rootOntology.getObjectPropertiesInSignature();
 	    for (OWLObjectProperty p : props) {
 	        LOG.info("Calculating svf subsumptions for "+p);
-	        axioms.addAll(getSomeValuesFromSubsumptions(p));
+	        axioms.addAll(getInferredSubClassOfGCIAxioms(p));
 	    }
 	    return axioms;
 
