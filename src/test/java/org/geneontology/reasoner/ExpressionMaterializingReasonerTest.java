@@ -59,14 +59,18 @@ public class ExpressionMaterializingReasonerTest {
 	}
 	
 	
-	// what we expect with Elk -
-	// the following should be the only direct results for this class-property pair when direct is set
-	//
 	// <http://x.org/kenyon-cell> <http://x.org/in-taxon> true = <http://x.org/arthropod>
 	// <http://x.org/Purkinje-cell-type-1> <http://x.org/in-taxon> true = <http://x.org/vertebrate>
 	// <http://x.org/kenyon-cell> <http://x.org/has-part> true = <http://x.org/axon>
 	// <http://x.org/Purkinje-cell-type-1> <http://x.org/part-of> true = <http://x.org/cerebellum>
-	@Test
+	/**
+	 * This test should run in <1s easily
+	 * 
+	 * We set a timeout of 2000ms, to check for regression errors that lead to loss of efficiency
+	 * 
+	 * @throws Exception
+	 */
+	@Test(timeout=2000)
 	public void test1() throws Exception {
 		// step 1: materialize expressions, defaults to all
 	    // AUTOMATIC NOW: elkExtReasoner.rewriteRangeAxioms();

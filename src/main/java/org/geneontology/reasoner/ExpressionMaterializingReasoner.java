@@ -355,6 +355,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	   return getSomeValuesFromSuperClasses(baseClass, p, direct, false);
 	}
 
+	boolean isIssuedAnonWarning = false;
 	public Set<OWLObjectSomeValuesFrom> getSomeValuesFromSuperClasses(OWLClass baseClass,
 	        OWLObjectProperty p,
 	        boolean direct, boolean reflexive) throws InconsistentOntologyException,
@@ -368,11 +369,17 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	    OWLClassExpression queryExpression = svf;
 	    // for efficiency, used a generated named class if available.
 	    // Explanation: Elk is highly inefficient if queried using a class expression, as
-	    // it needs to generate a new class and test with this. It's unneccessary to force Elk to
+	    // it needs to generate a new class and test with this. It's unnecessary to force Elk to
 	    // do this, if we already have a NC equivalent for the query expression
 	    // TODO: make a PR on Elk code
 	    if (cxMapRev.containsKey(svf)) {
 	        queryExpression = cxMapRev.get(svf);
+	    }
+	    else {
+	        if (!isIssuedAnonWarning) {
+	            LOG.warn("Unknown svf "+svf+" this forces Elk to make a new class which may be slow...");
+	        }
+	        isIssuedAnonWarning = true;
 	    }
 	    if (!wrappedReasoner.isSatisfiable(queryExpression)) {
 	        return ces;
@@ -389,51 +396,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	    return ces;
 	}
 	
-	
-	public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms(OWLObjectProperty p) throws InconsistentOntologyException,
-	ClassExpressionNotInProfileException, FreshEntitiesException,
-	ReasonerInterruptedException, TimeOutException {
-	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
-	    int n=0;
-	    Set<OWLClass> allClasses = rootOntology.getClassesInSignature(Imports.INCLUDED);
-	    for (OWLClass c : allClasses) {
-	        n++;
-	        if (n % 1000 == 0) {
-	            LOG.info("Class "+n+"/"+allClasses.size());
-	        }
-	        for (OWLObjectSomeValuesFrom sc : getSomeValuesFromSuperClasses(c, p, false, true)) {
-	            axioms.add(dataFactory.getOWLSubClassOfAxiom(
-	                    dataFactory.getOWLObjectSomeValuesFrom(p, c),
-	                    sc));
-	        }
-	    }
-        return axioms;
-	}
-	
-	public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms() throws InconsistentOntologyException,
-	ClassExpressionNotInProfileException, FreshEntitiesException,
-	ReasonerInterruptedException, TimeOutException {
-	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
-	    for (OWLObjectProperty p : rootOntology.getObjectPropertiesInSignature()) {
-	        LOG.info("Calculating svf subsumptions for "+p);
-	        axioms.addAll(getInferredSubClassOfGCIAxioms(p));
-	    }
-	    return axioms;
-	}
-	
-	public Set<OWLSubClassOfAxiom> getInferredSubClassOfGCIAxioms(Set<OWLObjectProperty> props) throws InconsistentOntologyException,
-	ClassExpressionNotInProfileException, FreshEntitiesException,
-	ReasonerInterruptedException, TimeOutException {
-	    Set<OWLSubClassOfAxiom> axioms = new HashSet<>();
-	    if (props == null)
-	        props = rootOntology.getObjectPropertiesInSignature();
-	    for (OWLObjectProperty p : props) {
-	        LOG.info("Calculating svf subsumptions for "+p);
-	        axioms.addAll(getInferredSubClassOfGCIAxioms(p));
-	    }
-	    return axioms;
 
-	}
 
 	public Set<OWLClass> getSuperClassesOver(OWLClassExpression ce,
 			OWLObjectProperty p,
@@ -501,7 +464,8 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	}
 
 	public OWLOntology getRootOntology() {
-		return wrappedReasoner.getRootOntology();
+	    return rootOntology;
+		//return wrappedReasoner.getRootOntology(); // note that additional classes injected here
 	}
 
 	public void interrupt() {
