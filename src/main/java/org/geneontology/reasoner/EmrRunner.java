@@ -36,7 +36,7 @@ public class EmrRunner {
     @Parameter(names = { "-v",  "--verbose" }, description = "Level of verbosity")
     private Integer verbose = 1;
 
-    @Parameter(names = { "-o", "--out"}, description = "output json/yaml file")
+    @Parameter(names = { "-o", "--out"}, description = "output OWL file")
     private String outpath;
 
     @Parameter(names = { "-p", "--properties"}, description = "OWL file containing declarations of properties to be used")
@@ -45,8 +45,8 @@ public class EmrRunner {
     @Parameter(names = { "-m", "--method"}, description = "one of: closure, svf")
     private String method = "closure";
 
-    @Parameter(names = { "-t", "--to"}, description = "output format: json or yaml")
-    private String outformat;
+    @Parameter(names = { "-t", "--tabfile"}, description = "output tabfile")
+    private String outtabfile;
 
     @Parameter(description = "Files")
     private List<String> files = new ArrayList<>();
@@ -88,6 +88,10 @@ public class EmrRunner {
                 ((ExpressionMaterializingReasoner)xreasoner).materializeExpressions(p);
             }
         }
+        else {
+            LOG.info("materializing ALL props");
+            ((ExpressionMaterializingReasoner)xreasoner).materializeExpressions();
+        }
         LOG.info("DONE materializing props");
         
         
@@ -99,7 +103,9 @@ public class EmrRunner {
             LOG.info("Getting all subsumptions");
             Set<OWLSubClassOfAxiom> axioms = ExtenderReasonerUtils.getInferredSubClassOfGCIAxioms(xreasoner, props);
             mgr.addAxioms(newOntology, axioms);
-            
+            if (outtabfile != null) {
+                ExtenderReasonerUtils.writeInferredSubClassOfGCIAxioms(axioms, outtabfile);
+            }
         }
         else {
             // assume method is closure

@@ -1,12 +1,18 @@
 package org.geneontology.reasoner;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLEntity;
+import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -112,5 +118,29 @@ public class ExtenderReasonerUtils {
         }
         return axioms;
 
+    }
+    
+    public static void writeInferredSubClassOfGCIAxioms(Set<OWLSubClassOfAxiom> axioms, String outpath) throws IOException {
+        File file = new File(outpath);
+        FileWriter writer = (new FileWriter(file));
+        for (OWLSubClassOfAxiom a : axioms) {
+            OWLObjectSomeValuesFrom c = (OWLObjectSomeValuesFrom)a.getSubClass();
+            OWLObjectSomeValuesFrom p = (OWLObjectSomeValuesFrom)a.getSuperClass();
+            
+            writer.write(id(c.getProperty()) + "\t" + id(c.getFiller()) + "\t" + 
+                    id(p.getProperty()) + "\t" + id(p.getFiller()));
+            writer.write("\n");
+        }
+        writer.close();
+    }
+
+
+    private static String id(OWLObject obj) {
+        if (obj instanceof OWLEntity) {
+            return ((OWLEntity)obj).getIRI().getRemainder().get();
+        }
+        else {
+            return obj.toString();
+        }
     }
 }
