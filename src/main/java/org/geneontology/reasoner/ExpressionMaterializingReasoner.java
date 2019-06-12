@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.semanticweb.elk.owlapi.ElkReasoner;
 import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
@@ -17,17 +19,20 @@ import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
+import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
+import org.semanticweb.owlapi.model.OWLObjectPropertyRangeAxiom;
 import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.SetOntologyID;
 import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
 import org.semanticweb.owlapi.model.parameters.Imports;
@@ -65,14 +70,17 @@ import com.google.common.base.Optional;
  * to expressions of depth k
  * 
  * In terms of performance the biggest impact are the number of {@link OWLObjectProperty} 
- * for which the materialization is required. 
+ * for which the materialization is required.
+ * 
  * It is usually *NOT* recommended to use all properties of an ontology signature.
+ * Instead call materializeExpressions
  * 
  * @author cjm
  *
  */
 public class ExpressionMaterializingReasoner extends OWLReasonerBase implements OWLExtendedReasoner {
 
+    private static Logger LOG = Logger.getLogger(ExpressionMaterializingReasoner.class);
 	private OWLReasoner wrappedReasoner;
 
 	private final OWLDataFactory dataFactory;
@@ -80,7 +88,10 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	private final OWLOntology expandedOntology;
 	final OWLOntologyManager manager;
 	final Set<OWLObjectProperty> cachedProperties;
-	private final Map<OWLClass,OWLObjectSomeValuesFrom> cxMap;
+	
+	// map between materialized named classes and their class expression equivalent
+    private final Map<OWLClass,OWLObjectSomeValuesFrom> cxMap;
+    private final Map<OWLObjectSomeValuesFrom, OWLClass> cxMapRev;
 	
 	private boolean includeImports = false;
 
@@ -101,14 +112,89 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 				wrappedReasoner = reasonerFactory.createNonBufferingReasoner(expandedOntology, configuration);
 			}
 			
-			
 		} catch (UnknownOWLOntologyException e) {
 			throw new RuntimeException("Could not setup reasoner", e);
 		} catch (OWLOntologyCreationException e) {
 			throw new RuntimeException("Could not setup reasoner", e);
 		}
 		cachedProperties = new HashSet<OWLObjectProperty>();
-		cxMap = new HashMap<OWLClass, OWLObjectSomeValuesFrom>();
+        cxMap = new HashMap<OWLClass, OWLObjectSomeValuesFrom>();
+        cxMapRev = new HashMap<OWLObjectSomeValuesFrom, OWLClass>();
+        
+        // we can consider making this optional, but in general it seems to have 
+        // no drawback in making inference slower
+        if (wrappedReasoner instanceof ElkReasoner) {
+            rewriteRangeAxioms();
+        }
+	}
+	
+
+
+    /**
+     * Range axioms are very useful for curtailing the space of possible SVF expressions.
+     * E.g. forbid occurs-in SOME apoptosis
+     * 
+     * Elk does not support Range axioms, so we use the range axioms to generate
+     * additional axioms that while not complete give us many benefits.
+     * 
+     * E.g. if we have:
+     *  - Range(occurs-in, material-entity)
+     *  - material-entity SubClassOf* continuant
+     *  - continuant DisjointWith occurrent
+     *  
+     *   then we can add an axiom
+     *   Nothing = occurs-in some continuant
+     * 
+     * Adding these do not appear to increase overall time for ontologies such as go-plus,
+     * and overall running is faster due to less expressions being generated.
+     * 
+     * 
+     * 
+     */
+    public void rewriteRangeAxioms() {
+	    OWLClass nothing = dataFactory.getOWLNothing();
+	    Set<OWLAxiom> newAxioms = new HashSet<>();
+        Set<OWLObjectPropertyRangeAxiom> raxs = new HashSet<>();
+        Map<OWLClassExpression, Set<OWLClassExpression>> disjointMap = new HashMap<>();
+        for (OWLAxiom ax : rootOntology.getAxioms(Imports.INCLUDED)) {
+            if (ax instanceof OWLDisjointClassesAxiom) {
+                OWLDisjointClassesAxiom da = (OWLDisjointClassesAxiom)ax;
+                for (OWLClassExpression c1 : da.getClassExpressions()) {
+                    if (!disjointMap.containsKey(c1))
+                        disjointMap.put(c1, new HashSet<>());
+                    for (OWLClassExpression c2 : da.getClassExpressionsMinus(c1)) {
+                        disjointMap.get(c1).add(c2);
+                    }
+                    
+                }
+            }
+        }
+	    for (OWLAxiom ax : rootOntology.getAxioms(Imports.INCLUDED)) {
+	        if (ax instanceof OWLObjectPropertyRangeAxiom) {
+	            OWLObjectPropertyRangeAxiom rax = (OWLObjectPropertyRangeAxiom)ax; 
+	            raxs.add(rax);
+	            OWLClassExpression rc = rax.getRange();
+	            // elk does not support disjoint classes, so we follow hierarchy
+	            Set<OWLClassExpression> disjointClasses = new HashSet<>();
+	            Set<OWLClass> rscs = 
+	                    wrappedReasoner.getSuperClasses(rc, false).getFlattened();
+	            for (OWLClass rsc : rscs) {
+	                if (disjointMap.containsKey(rsc))
+	                    disjointClasses.addAll(disjointMap.get(rsc));
+	            }
+	            if (disjointMap.containsKey(rc)) {
+	                disjointClasses.addAll(disjointMap.get(rc));
+	            }
+	            
+                for (OWLClassExpression d : disjointClasses) {
+	                OWLEquivalentClassesAxiom cax = dataFactory.getOWLEquivalentClassesAxiom(nothing,
+	                        dataFactory.getOWLObjectSomeValuesFrom(rax.getProperty(), d));
+	                newAxioms.add(cax);
+	                LOG.info("Translated "+rax+" --> "+cax);
+	            }
+	        }
+	    }
+	    expandedOntology.getOWLOntologyManager().addAxioms(expandedOntology, newAxioms);
 	}
 
 	/**
@@ -138,6 +224,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 		AddImport ai = new AddImport(expandedOntology, 
 				dataFactory.getOWLImportsDeclaration(rootOntologyIRI));
 		manager.applyChange(ai);
+		
 		return expandedOntology;
 	}
 
@@ -173,6 +260,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	 * @see ExpressionMaterializingReasoner#setIncludeImports(boolean) if it should include imports
 	 */
 	public void materializeExpressions() {
+	    LOG.info("Materializing SVFs for ALL properties");
 		materializeExpressions(rootOntology.getObjectPropertiesInSignature(Imports.fromBoolean(includeImports)));
 	}
 
@@ -183,6 +271,7 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	 * @see ExpressionMaterializingReasoner#setIncludeImports(boolean) if it should include imports
 	 */
 	public void materializeExpressions(Collection<OWLObjectProperty> properties) {
+        LOG.info("Materializing SVFs for: "+properties);
 		for (OWLObjectProperty p : properties) {
 			if (cachedProperties.contains(p)){
 				continue;
@@ -206,6 +295,8 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	}
 	
 	private void materializeExpressionsInternal(OWLObjectProperty p) {
+        LOG.info("Materializing SVFs for: "+p);
+
 		for (OWLClass baseClass : rootOntology.getClassesInSignature(Imports.fromBoolean(includeImports))) {
 			// only materialize for non-helper classes
 			if (cxMap.containsKey(baseClass)) {
@@ -213,13 +304,14 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 			}
 			OWLObjectSomeValuesFrom x = dataFactory.getOWLObjectSomeValuesFrom(p, baseClass);
 			IRI xciri = IRI.create(baseClass.getIRI()+"__"+saveIRItoString(p.getIRI()));
-			OWLClass xc = dataFactory.getOWLClass(xciri);
-			OWLEquivalentClassesAxiom eca = dataFactory.getOWLEquivalentClassesAxiom(xc, x);
+			OWLClass namedClassEquivalent = dataFactory.getOWLClass(xciri);
+			OWLEquivalentClassesAxiom eca = dataFactory.getOWLEquivalentClassesAxiom(namedClassEquivalent, x);
 			String lbl = p.getIRI().getShortForm()+" "+baseClass.getIRI().getShortForm();
 			manager.addAxiom(expandedOntology, dataFactory.getOWLAnnotationAssertionAxiom(xciri, dataFactory.getOWLAnnotation(dataFactory.getRDFSLabel(), dataFactory.getOWLLiteral(lbl))));
-			cxMap.put(xc, x);
+            cxMap.put(namedClassEquivalent, x);
+            cxMapRev.put(x, namedClassEquivalent);
 			manager.addAxiom(expandedOntology, eca);
-			manager.addAxiom(expandedOntology, dataFactory.getOWLDeclarationAxiom(xc));
+			manager.addAxiom(expandedOntology, dataFactory.getOWLDeclarationAxiom(namedClassEquivalent));
 		}
 		cachedProperties.add(p);
 	}
@@ -254,6 +346,57 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 		}
 		return ces;
 	}
+	
+	public Set<OWLObjectSomeValuesFrom> getSuperClassExpressionsForGCI(OWLClass baseClass,
+	        OWLObjectProperty p,
+	        boolean direct) throws InconsistentOntologyException,
+	ClassExpressionNotInProfileException, FreshEntitiesException,
+	ReasonerInterruptedException, TimeOutException {
+	   return getSomeValuesFromSuperClasses(baseClass, p, direct, false);
+	}
+
+	boolean isIssuedAnonWarning = false;
+	public Set<OWLObjectSomeValuesFrom> getSomeValuesFromSuperClasses(OWLClass baseClass,
+	        OWLObjectProperty p,
+	        boolean direct, boolean reflexive) throws InconsistentOntologyException,
+	ClassExpressionNotInProfileException, FreshEntitiesException,
+	ReasonerInterruptedException, TimeOutException {
+
+	    Set<OWLObjectSomeValuesFrom> ces = new HashSet<>();
+	    wrappedReasoner.flush();
+	    
+	    OWLObjectSomeValuesFrom svf = dataFactory.getOWLObjectSomeValuesFrom(p, baseClass);
+	    OWLClassExpression queryExpression = svf;
+	    // for efficiency, used a generated named class if available.
+	    // Explanation: Elk is highly inefficient if queried using a class expression, as
+	    // it needs to generate a new class and test with this. It's unnecessary to force Elk to
+	    // do this, if we already have a NC equivalent for the query expression
+	    // TODO: make a PR on Elk code
+	    if (cxMapRev.containsKey(svf)) {
+	        queryExpression = cxMapRev.get(svf);
+	    }
+	    else {
+	        if (!isIssuedAnonWarning) {
+	            LOG.warn("Unknown svf "+svf+" this forces Elk to make a new class which may be slow...");
+	        }
+	        isIssuedAnonWarning = true;
+	    }
+	    if (!wrappedReasoner.isSatisfiable(queryExpression)) {
+	        return ces;
+	    }
+	    for (OWLClass c : wrappedReasoner.getSuperClasses(queryExpression, direct).getFlattened()) {
+	        if (cxMap.containsKey(c)) {
+	            OWLObjectSomeValuesFrom cx = cxMap.get(c);
+	            ces.add(cx);
+	        }
+	    }
+	    if (reflexive) {
+	        ces.add(svf);
+	    }
+	    return ces;
+	}
+	
+
 
 	public Set<OWLClass> getSuperClassesOver(OWLClassExpression ce,
 			OWLObjectProperty p,
@@ -321,7 +464,8 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	}
 
 	public OWLOntology getRootOntology() {
-		return wrappedReasoner.getRootOntology();
+	    return rootOntology;
+		//return wrappedReasoner.getRootOntology(); // note that additional classes injected here
 	}
 
 	public void interrupt() {
