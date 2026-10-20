@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -50,8 +52,6 @@ import org.semanticweb.owlapi.reasoner.TimeOutException;
 import org.semanticweb.owlapi.reasoner.UnsupportedEntailmentTypeException;
 import org.semanticweb.owlapi.reasoner.impl.OWLReasonerBase;
 import org.semanticweb.owlapi.util.Version;
-
-import com.google.common.base.Optional;
 
 /**
  * This wraps an existing reasoner to implement OWLExtendedReasoner.
@@ -173,7 +173,8 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	 * @see ExpressionMaterializingReasoner#setIncludeImports(boolean) if it should include imports
 	 */
 	public void materializeExpressions() {
-		materializeExpressions(rootOntology.getObjectPropertiesInSignature(Imports.fromBoolean(includeImports)));
+		materializeExpressions(rootOntology.objectPropertiesInSignature(Imports.fromBoolean(includeImports))
+				.collect(Collectors.toList()));
 	}
 
 	/**
@@ -206,7 +207,9 @@ public class ExpressionMaterializingReasoner extends OWLReasonerBase implements 
 	}
 	
 	private void materializeExpressionsInternal(OWLObjectProperty p) {
-		for (OWLClass baseClass : rootOntology.getClassesInSignature(Imports.fromBoolean(includeImports))) {
+		List<OWLClass> baseClasses = rootOntology.classesInSignature(Imports.fromBoolean(includeImports))
+				.collect(Collectors.toList());
+		for (OWLClass baseClass : baseClasses) {
 			// only materialize for non-helper classes
 			if (cxMap.containsKey(baseClass)) {
 				continue;
